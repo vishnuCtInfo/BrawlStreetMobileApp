@@ -10,7 +10,6 @@ import { message as MESSAGE } from "antd";
 
 export const configJSON = require("../Component/Config");
 
-
 function Profile() {
     const navigate = useNavigate()
     const countryData = Country.getAllCountries();
@@ -274,6 +273,7 @@ function Profile() {
                                 <div class="ct_grey_bg_clr py-3">
                                     <h4 class="mb-0 ct_fs_12 ct_fw_600 ct_grey_text_2">AVATARS</h4>
                                 </div>
+
                                 <div class="d-flex align-items-center gap-2  flex-wrap pt-3">
 
                                     <div class="ct_avatar_img ct_avatar_blue">

@@ -45,7 +45,7 @@ function EmailSent() {
                             <p className="ct_grey_text mt_15 ct_fs_14 ct_lh_20 ct_fw_400 text-center">We just sent you an email with everything you need to log back in. Sometimes we get put in the junk folder - check for us there if you don’t see anything straight away.</p>
 
                             <div className="text-center mt-30">
-                                <NavLink to="/password/reset" className="ct_button_blue">GO TO CHANGE PASSWORD</NavLink>
+                                <NavLink to="/login" className="ct_button_blue">Back to log in</NavLink>
                             </div>
                             <div className="text-center mt-30">
                                 <button type='button' onClick={resendMail} className="ct_blue_text text-center ct_fw_600 ct_fs_14 border-0 btn btn-none" disabled={loading} >

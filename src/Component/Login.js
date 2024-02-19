@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import eye from "../img/eye.png"
 import back_btn from "../img/back_btn.png"
-import { message, message as MESSAGE } from "antd";
 import axios from 'axios'
 import { BsFillEyeSlashFill } from "react-icons/bs";
 import { IoEyeSharp } from "react-icons/io5"
 import { IsAuthnaticated, SetIsAuthnaticated } from '../Utils/Auth';
 import { Formik } from 'formik';
-import { Schema_login_form } from '../Services/Schema';
+import { Schema_login_form } from '../Utils/Schema';
+import { API_user_login } from '../Services/userApIs';
 export const configJSON = require("../Component/Config");
 function Login() {
     const [isEye, setIsEye] = useState(false)
@@ -28,22 +28,19 @@ function Login() {
     }
     const onSubmitForm = async (payload, { resetForm }) => {
         try {
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.login_api, payload);
+            // const { data } = await axios.post(configJSON.baseUrl + configJSON.login_api, payload);
+            const data = await API_user_login(payload);
             console.log(data)
             if (data?.success) {
-                MESSAGE.success(data?.message)
                 navigate("/onboarding6");
                 resetForm();
                 SetIsAuthnaticated({keepLogin, data})
                 return;
             }
-
-            MESSAGE.error(data?.message)
             setShowError(true);
             return;
 
         } catch (error) {
-            MESSAGE.error('server internal error');
             console.log(error);
         }
     }

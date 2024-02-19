@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
 import axios from 'axios'
 import { message, message as MESSAGE } from "antd";
+import { API_card_delete } from '../Services/cardAPIs'
 export const configJSON = require("../Component/Config");
 
 function AddFunds() {
@@ -47,24 +48,12 @@ function AddFunds() {
 
     const handleRadioChange = (cardId) => {
         setSelectedCardId(cardId);
-    }
+    } 
 
-    const deleteCardById = (val) => {
-        axios({
-            url: configJSON.baseUrl + configJSON.deleteCard + `/${val}/`,
-            method: "delete",
-        }).then((res) => {
-            if (res?.data?.success == true) {
-                MESSAGE.success(res?.data?.message)
-                onHandlegetAllCard()
-            }
-            else {
-                MESSAGE.error(res?.data?.message)
-            }
-        })
-            .catch((error) => {
-                console.log(error, 'error')
-            })
+    const deleteCardById = async(val) => {
+        const res1 = await API_card_delete(val);
+        onHandlegetAllCard();
+       
     }
 
     return (

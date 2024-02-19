@@ -1,19 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
+import { API_games_createGame } from '../Services/gamesAPIs';
+import { Convert12H } from '../Utils/TimeConverter';
 
 function CreateGameReview() {
+    const navigate = useNavigate();
     const location = useLocation();
-    const gameId = location?.state?.gameId;
     const gameData = location?.state?.gameData;
+    const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate()
     const HandleInviteFriends = () => {
-        navigate("/invite/friends",{state:{'gameId':gameId, 'gameData':gameData}})
+        navigate("/invite/friends", { state: { 'gameId': '', 'gameData': gameData } })
     }
     const HandleCreateGame = () => {
-        navigate("/create/game")
+        navigate("/create/game", { state: { 'gameData': gameData } })
     }
+
+    const create_game = async () => {
+        if (gameData) {
+            setLoading(true)
+            try {
+                const res = await API_games_createGame(gameData);
+                console.log(res)
+                if (res) {
+                    navigate("/invite/friends", { state: { 'gameData': res } })
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false)
+            }
+        }
+
+    }
+
 
 
     return (
@@ -46,11 +67,14 @@ function CreateGameReview() {
                         </div>
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
                             <p className="mb-0 ct_fs_13 ct_fw_400">START TIME</p>
-                            <p className="mb-0 ct_fs_13 ct_fw_700">{gameData?.start_time}</p>
+                            <p className="mb-0 ct_fs_13 ct_fw_700">{Convert12H(gameData?.start_time)}</p>
                         </div>
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
                             <p className="mb-0 ct_fs_13 ct_fw_400">TIMEZONE</p>
-                            <p className="mb-0 ct_fs_13 ct_fw_700">Eastern Time (EST)</p>
+                            <p className="mb-0 ct_fs_13 ct_fw_700">
+                                {/* Eastern Time (EST) */}
+                                {gameData?.time_zone}
+                            </p>
                         </div>
 
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
@@ -70,7 +94,10 @@ function CreateGameReview() {
                         </div>
                     </div>
                     <div className="ct_grey_bg_clr ct_fixed_botom">
-                        <a onClick={() => HandleInviteFriends()} className="ct_button_blue ct_light_blue_btn">CONTINUE</a>
+                        <button onClick={create_game} className="ct_button_blue ct_light_blue_btn">
+                            {loading &&
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            }CONTINUE</button>
                     </div>
                 </div>
             </div>

@@ -50,11 +50,11 @@ function EmailInvite() {
   useEffect(() => {
     const code = IsAuthnaticated();
     if (code) {
-      let rLink = server_live_url;
+      let rLink = server_live_url+'/signup';
 
       const isLocal = window.location.href.includes('localhost');
       if (isLocal) {
-        rLink = server_local_url;
+        rLink = server_local_url+'/signup';
       }
       const updatedReferanceLink = `${rLink}?code=${code.referralCode}`;
       setUserData({

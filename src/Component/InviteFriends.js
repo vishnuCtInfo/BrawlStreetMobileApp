@@ -16,7 +16,7 @@ export const configJSON = require("../Component/Config");
 
 function InviteFriends() {
     const location = useLocation();
-    const game_id = location?.state?.gameId;
+    const game_id = location?.state?.gameData?.id;
     const gameData = location?.state?.gameData;
 
     const navigate = useNavigate()

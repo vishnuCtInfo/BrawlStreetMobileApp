@@ -5,6 +5,7 @@ import add from "../img/add.png"
 import _50 from "../img/50-50.png"
 import BottomNavigation from './BottomNavigation'
 import calculateEndDateAndRemainingDays from '../Utils/LeftDaysCaclulation'
+import { API_games_getAllgames } from '../Services/gamesAPIs'
 export const configJSON = require("../Component/Config");
 
 function MyGames() {
@@ -37,7 +38,8 @@ function MyGames() {
 
     const getAllGames = async () => {
         try {
-            const { data } = await axios.get(configJSON.baseUrl + configJSON.get_all_games)
+            // const { data } = await axios.get(configJSON.baseUrl + configJSON.get_all_games)
+            const data = await API_games_getAllgames();
             if (data?.success) {
                 setGames(data?.data);
                 return;

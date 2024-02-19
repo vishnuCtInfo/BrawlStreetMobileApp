@@ -1,15 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { message as MESSAGE } from "antd";
 import back_btn from "../img/back_btn.png"
 import axios from 'axios'
-import { forgate_pass_email_set } from '../Utils/Auth';
+import { forgate_pass_email_set, server_live_url, server_local_url } from '../Utils/Auth';
 export const configJSON = require("../Component/Config");
 function ForgotPassword() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('')
     const [email, setEmail] = useState('');
+    const [forgotPage, setForgotPage] = useState(server_live_url+'/password/reset?token=');
     const sendMail = async (e) => {
         e.preventDefault();
         setError('');
@@ -18,16 +19,17 @@ function ForgotPassword() {
             return;
         }
 
-        const regExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+        const regExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i;
 
         if (!regExp.test(email)) {
             setError('* enter only email address.');
             return;
         }
         setLoading(true);
+        
         try {
             forgate_pass_email_set(email);
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.forget_password, { email });
+            const { data } = await axios.post(configJSON.baseUrl + configJSON.forget_password, { email, url_link:forgotPage });
             console.log('res. data: ', data);
             if (data?.success) {
                 MESSAGE.success(data?.message)
@@ -44,6 +46,13 @@ function ForgotPassword() {
             setLoading(false)
         }
     }
+
+    useEffect(()=>{
+        const pageAddress = window?.location?.href.includes('localhost')
+        if(pageAddress){
+            setForgotPage(server_local_url+'/password/reset?token=');
+        }
+    },[])
 
     return (
         <>

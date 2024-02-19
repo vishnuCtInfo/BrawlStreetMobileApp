@@ -1,4 +1,6 @@
 import './App.css';
+import 'react-datepicker/dist/react-datepicker.css';
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Account from './Component/Account';
 import AddCart from './Component/AddCart';

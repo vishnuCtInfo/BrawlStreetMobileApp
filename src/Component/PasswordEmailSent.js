@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { IsAuthnaticated } from '../Utils/Auth';
 import { message as MESSAGE } from "antd";
 import axios from 'axios';
@@ -59,7 +59,7 @@ function PasswordEmailSent() {
             return;
         }
 
-        const regExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+        const regExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i;
 
         //so danguars methods :)
         if (!regExp.test(email)) {
@@ -107,13 +107,13 @@ function PasswordEmailSent() {
 
 
                     <div className="ct_white_bg pt-28 ct_pb_100">
-                        <div className="px-15">
+                        {/* <div className="px-15">
                             <div className="pb-20">
                                 <p className="mb-0 ct_fw_400 ct_fs_13 mb-1 ct_7C7D7E_text_clr">OTP</p>
                                 <input type="text" placeholder='Enter here OTP' value={otp} onChange={(e) => setOTP(e?.target?.value)} className="ct_select_option form-control w-100" />
                                 <span className='text-danger' style={{ width: '80%' }}>{otpError}</span>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="px-15">
                             <p className="mb-30 ct_fs_14 ct_black_clr ">We just sent you an email with everything you need to set your new password. Sometimes we get put in the junk folder - check for us there if you don’t see anything straight away.</p>
                             <div className="pb-20">
@@ -126,11 +126,11 @@ function PasswordEmailSent() {
                     </div>
                 </div>
                 <div className="ct_grey_bg_clr ct_fixed_botom">
-                    <button onClick={sendOTP} className="ct_button_blue ct_light_blue_btn" disabled={loading} >
+                    <NavLink to="/setting" className="ct_button_blue ct_light_blue_btn" disabled={loading} >
                         {loading &&
                             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        } SENT OTP
-                    </button>
+                        } back to settings
+                    </NavLink>
                 </div>
             </div>
         </>

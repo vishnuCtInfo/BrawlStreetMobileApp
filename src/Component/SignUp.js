@@ -8,7 +8,8 @@ import { IoEyeSharp } from "react-icons/io5"
 import axios from 'axios'
 import { IsAuthnaticated } from '../Utils/Auth';
 import { Formik } from 'formik';
-import { Schema_signup_form } from '../Services/Schema';
+import { Schema_signup_form } from '../Utils/Schema';
+import { API_user_signup } from '../Services/userApIs';
 export const configJSON = require("../Component/Config");
 
 function SignUp() {
@@ -21,20 +22,16 @@ function SignUp() {
 
     const HandleSplash = () => {
         navigate("/")
-    }
+    }  
 
-    const onSubmitForm = async (values, { resetForm }) => {
-        const payload = values;
+    const onSubmitForm = async (payload, { resetForm }) => {
         try {
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.signup_api, payload);
+            const data = await API_user_signup(payload);
             if (data?.success) {
-                MESSAGE.success(data?.message)
                 navigate("/check/your/mail", { state: { 'email': payload?.email } });
                 resetForm();
                 return;
             }
-
-            MESSAGE.error(data?.message)
             return;
         } catch (error) {
             console.log(error);
@@ -76,7 +73,7 @@ function SignUp() {
                             onSubmit={(values, actions) => onSubmitForm(values, actions)}
                         >
                             {
-                                ({ setFieldValue, setFieldError, values, errors, touched, handleBlur, handleChange, handleSubmit, isSubmitting }) => {
+                                ({ setFieldValue, values, errors, touched, handleBlur, handleChange, handleSubmit, isSubmitting }) => {
 
                                     const onSelectCountry = (val) => {
                                         setFieldValue("country", val);
@@ -97,17 +94,6 @@ function SignUp() {
                                         else
                                             setSelectedStates(['N/A'])
                                     };
-
-                                    // const checkPass = (val) => {
-                                    //     setFieldValue('password', val);
-                                    //     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                                    //     if (val.test(passwordRegex)) {
-                                    //         setFieldError('password', '');
-                                    //     } else {
-                                    //         setFieldError('password', 'insert number and character')
-                                    //     }
-                                    // }
-
                                     return (
 
                                         <form onSubmit={(e) => { e.preventDefault(); }} className="w-100">

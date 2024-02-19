@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import eye_view from "../img/eye_view.png"
 import { Formik } from 'formik'
-import { Schema_forgate_password_form } from '../Services/Schema'
+import { Schema_forgate_password_form } from '../Utils/Schema'
 import { BsFillEyeSlashFill } from 'react-icons/bs'
 import { IoEyeSharp } from 'react-icons/io5'
 import { IsAuthnaticated } from '../Utils/Auth'

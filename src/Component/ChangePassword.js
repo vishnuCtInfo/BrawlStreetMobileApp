@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import back_btn from "../img/back_btn.png"
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Formik } from 'formik'
-import { Schema_reset_password_form } from '../Services/Schema'
+import { Schema_reset_password_form } from '../Utils/Schema'
 import { IoEyeSharp } from 'react-icons/io5'
 import { BsFillEyeSlashFill } from 'react-icons/bs'
 import { IsAuthnaticated } from '../Utils/Auth'

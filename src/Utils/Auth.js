@@ -53,8 +53,8 @@ export function SetIsAuthnaticated({ data, keepLogin }) {
   }
 }
 
-export const server_live_url = 'http://138.197.50.31/mobile/mobile/signup';
-export const server_local_url = 'http://localhost:3000/mobile/signup';
+export const server_live_url = 'http://138.197.50.31/mobile';
+export const server_local_url = 'http://localhost:3000/mobile';
 
 export const forgate_pass_email_set =(email) => sessionStorage.setItem('forgate-password-email',email);
 export const forgate_pass_email_get = () => sessionStorage.getItem('forgate-password-email');
