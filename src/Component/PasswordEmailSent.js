@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { IsAuthnaticated } from '../Utils/Auth';
 import { message as MESSAGE } from "antd";
 import axios from 'axios';
-export const configJSON = require("../Component/Config");
+import { API_user_fogotPassword } from '../Services/userApIs';
 
 function PasswordEmailSent() {
     const navigate = useNavigate()
@@ -12,44 +12,6 @@ function PasswordEmailSent() {
     const [otpError, setOtpError] = useState('');
 
 
-    const sendOTP = async () => {
-        setOtpError('')
-        if (!otp) {
-            setOtpError('please enter vailed otp');
-            return
-        }
-        try {
-            setLoading(true);
-            const formData = new FormData;
-            const email = IsAuthnaticated()?.activeUserEmail;
-            formData.append('email', email);
-            formData.append('otp', otp);
-
-            const { data } = await axios.post(configJSON?.baseUrl + configJSON?.check_otp, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            if (data?.success) {
-                MESSAGE.success('otp verified')
-                sessionStorage.setItem('verifiedOTP', otp);
-                navigate('/set/new/password');
-            }
-
-        } catch (error) {
-            console.log(error);
-            if (error?.response?.data?.message) {
-                MESSAGE.error(error?.response?.data?.message)
-                setOtpError(error?.response?.data?.message)
-                return;
-            }
-            MESSAGE.error('server internal error');
-
-        } finally {
-            setLoading(false);
-        }
-    }
 
 
     const sendMail = async () => {
@@ -72,18 +34,14 @@ function PasswordEmailSent() {
 
         setLoading(true);
         try {
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.forget_password, { email });
-            console.log('res. data: ', data);
-            if (data?.success) {
-                MESSAGE.success(data?.message)
+            const data = await API_user_fogotPassword({email});
+           if (data?.success) {
                 navigate("/password/email/sent");
                 return
             }
-            MESSAGE.error(data?.message)
             return
         } catch (error) {
             console.log(error);
-            MESSAGE.error("server internal error")
         } finally {
             setLoading(false)
         }

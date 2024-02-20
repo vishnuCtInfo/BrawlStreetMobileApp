@@ -6,7 +6,6 @@ import _50 from "../img/50-50.png"
 import BottomNavigation from './BottomNavigation'
 import calculateEndDateAndRemainingDays from '../Utils/LeftDaysCaclulation'
 import { API_games_getAllgames } from '../Services/gamesAPIs'
-export const configJSON = require("../Component/Config");
 
 function MyGames() {
 
@@ -19,26 +18,10 @@ function MyGames() {
     const HandleCreateGame = () => {
         navigate("/create/game")
     }
-    // const HandleMygames = () => {
-    //     navigate("/mygames")
-    // }
-    // const HandleOpenGames = () => {
-    //     navigate("/open/games")
-    // }
-    // const HandleWatchlist = () => {
-    //     navigate("/watchlist")
-    // }
-    // const HandleNavigationMore = () => {
-    //     navigate("/navigation/more")
-    // }
-    // const HandleNotificationsMain = () => {
-    //     navigate("/notification/main")
-    // }
 
 
     const getAllGames = async () => {
         try {
-            // const { data } = await axios.get(configJSON.baseUrl + configJSON.get_all_games)
             const data = await API_games_getAllgames();
             if (data?.success) {
                 setGames(data?.data);

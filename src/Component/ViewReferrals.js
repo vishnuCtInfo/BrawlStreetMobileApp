@@ -14,9 +14,7 @@ import Polygon_2 from "../img/Polygon_2.png"
 import axios from 'axios'
 import { IsAuthnaticated, server_live_url, server_local_url } from '../Utils/Auth'
 import { message as MESSAGE } from "antd";
-export const configJSON = require("../Component/Config");
-
-
+import { API_user_refferal_joined, API_user_refferal_pending, API_user_sendMailInvitaion } from '../Services/userApIs'
 
 function ViewReferrals() {
 
@@ -55,17 +53,17 @@ function ViewReferrals() {
     }
     const getPendingInvitaions = async () => {
         try {
-            const { data } = await axios.get(configJSON?.baseUrl + configJSON?.get_pending_invites);
+            const data = await API_user_refferal_pending()
             setPendingInvitaions(data);
         } catch (error) {
-            console.log(error);
+            console.log(error); 
         }
     }
 
 
     const getJoinInvitaions = async () => {
         try {
-            const { data } = await axios.get(configJSON?.baseUrl + configJSON?.get_joined_invites);
+            const data = await API_user_refferal_joined();  
             setJoinedInvitaions(data)
         } catch (error) {
             console.log(error);
@@ -77,18 +75,16 @@ function ViewReferrals() {
         payload = { ...userData, ...payload };
         if (loadingBtn) {
             MESSAGE.info('please wait');
-            return
+            return  
         }
 
         setLoadingBtn(true)
         try {
             payload = { ...payload, reference_link: payload.reference_link + '=email=' + payload?.email }
-            const { data } = await axios.post(configJSON?.baseUrl + configJSON?.send_email_invitation, payload);
-            MESSAGE.success(data?.message);
-            // navigate("/send/invite", { state: { id: payload?.email } })
-        } catch (error) {
+            const data = await API_user_sendMailInvitaion(payload);
+             MESSAGE.success(data?.message);
+         } catch (error) {
             console.log(error);
-            MESSAGE.error('server internal errors');
         } finally {
             setLoadingBtn(false)
         }

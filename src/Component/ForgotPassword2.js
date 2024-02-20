@@ -3,8 +3,7 @@ import back_btn from "../img/back_btn.png"
 import { useNavigate } from 'react-router-dom'
 import { IsAuthnaticated } from '../Utils/Auth'
 import { message as MESSAGE } from "antd";
-import axios from 'axios'
-export const configJSON = require("../Component/Config");
+import { API_user_fogotPassword } from '../Services/userApIs';
 
 function ForgotPassword2() {
     const navigate = useNavigate()
@@ -31,18 +30,14 @@ function ForgotPassword2() {
 
         setLoading(true);
         try {
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.forget_password, { email });
-            console.log('res. data: ', data);
+            const data = await API_user_fogotPassword({email});
             if (data?.success) {
-                MESSAGE.success(data?.message)
                 navigate("/password/email/sent");
                 return
             }
-            MESSAGE.error(data?.message)
             return
         } catch (error) {
             console.log(error);
-            MESSAGE.error("server internal error")
         } finally {
             setLoading(false)
         }

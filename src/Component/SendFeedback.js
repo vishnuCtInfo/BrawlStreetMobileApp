@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import back_btn from "../img/back_btn.png";
 import BottomNavigation from './BottomNavigation'
 import { IsAuthnaticated } from '../Utils/Auth';
-import axios from 'axios';
 import { message as MESSAGE } from "antd";
 import { useNavigate } from 'react-router-dom';
-export const configJSON = require("../Component/Config");
+import { API_user_sendFeedback } from '../Services/userApIs';
 
 export default function SendFeedback() {
   const navigate = useNavigate()
@@ -20,18 +19,14 @@ export default function SendFeedback() {
     setLoadingBtn(true);
     try {
       const { activeUserEmail } = IsAuthnaticated();
-
-      const { data } = await axios.post(configJSON?.baseUrl + configJSON?.send_feedback, { message, email: activeUserEmail })
-      
+      const data = await API_user_sendFeedback({ message, email: activeUserEmail }); 
       if (data?.Success){
-        MESSAGE.success('send successful');
         setMessage('');
         return;
       }
       console.log(data?.message);
     } catch (error) {
       console.log(error);
-      MESSAGE.error('server internal error')
     } finally {
       setLoadingBtn(false)
     }

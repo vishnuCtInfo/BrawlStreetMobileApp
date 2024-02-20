@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { message, message as MESSAGE } from "antd";
-import axios from 'axios'
 import { forgate_pass_email_get } from '../Utils/Auth';
-export const configJSON = require("../Component/Config");
+import { API_user_fogotPassword } from '../Services/userApIs';
 
 function EmailSent() {
     const navigate = useNavigate()
@@ -19,16 +18,9 @@ function EmailSent() {
         }
         try {
             setloading(true);
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.forget_password, { email });
-            if (data?.success) {
-                MESSAGE.success(data?.message)
-                return
-            }
-            MESSAGE.error(data?.message)
-            return
+            await API_user_fogotPassword({email})
         } catch (error) {
             console.log(error);
-            MESSAGE.error("server internal error")
         }finally{
             setloading(false);
         }

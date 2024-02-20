@@ -1,6 +1,7 @@
 import axios from "axios";
+import { _BACKEND_BASE_URL } from "./API_Routes";
 
-const baseURL = "http://174.138.66.25:8000";
+const baseURL = _BACKEND_BASE_URL;
 
 const api = axios.create({
     baseURL,

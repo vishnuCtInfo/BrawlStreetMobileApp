@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
 import _50 from "../img/50-50.png"
 import axios from 'axios'
-export const configJSON = require("../Component/Config");
+import { API_games_getAllgames } from '../Services/gamesAPIs'
 
 function InviteToGame() {
     const navigate = useNavigate()
@@ -14,8 +14,7 @@ function InviteToGame() {
     const [gameIds, setGameIds] = useState([]);
 
     const getAllGames = async () => {
-        try {
-            const { data } = await axios.get(configJSON.baseUrl + configJSON.get_all_games)
+        try {  const data = await API_games_getAllgames();
             if (data?.success) {
                 setGames(data?.data);
                 return;

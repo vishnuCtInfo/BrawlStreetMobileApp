@@ -45,7 +45,7 @@ export const Shcema_create_game_form = Yup.object({
   entry_fee: Yup.string().required('Entry-Fee is required'),
   start_date: Yup.date().required('Starting Date is required'),
   start_time: Yup.string().required('Starting Time is required'),
-  duration: Yup.string().required('Game Duration is required'),
+  duration: Yup.string().min(1,'Minimum 1').required('Game Duration is required'),
   hours: Yup.string().required('Game Hours is required'),
   max_player_level: Yup.string().required('Game Player Max Level is required'),
 })

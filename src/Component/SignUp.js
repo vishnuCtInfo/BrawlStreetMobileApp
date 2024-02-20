@@ -10,7 +10,6 @@ import { IsAuthnaticated } from '../Utils/Auth';
 import { Formik } from 'formik';
 import { Schema_signup_form } from '../Utils/Schema';
 import { API_user_signup } from '../Services/userApIs';
-export const configJSON = require("../Component/Config");
 
 function SignUp() {
     const navigate = useNavigate()

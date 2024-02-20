@@ -3,10 +3,9 @@ import back_btn from "../img/back_btn.png";
 import man_1 from "../img/man_1.png";
 import green_circle from "../img/green_circle.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { message as MESSAGE } from "antd";
 import { IsAuthnaticated } from "../Utils/Auth";
-export const configJSON = require("../Component/Config");
+import {  API_friends_getAllUsers, API_friends_searchByEmail, API_friends_sendFrinedRequest } from "../Services/frinedsAPI";
+
 
 function AddFriends() {
   const navigate = useNavigate();
@@ -23,9 +22,7 @@ function AddFriends() {
 
   const getAllFriends = async () => {
     try {
-      const { data } = await axios.get(
-        configJSON?.baseUrl + configJSON?.friends_get_all_users
-      );
+      const data = await API_friends_getAllUsers();
       if (data?.Success) {
         const user = IsAuthnaticated();
         const fdata = data?.users?.filter((obj) => obj.email != user?.activeUserEmail)
@@ -42,10 +39,7 @@ function AddFriends() {
       return;
     }
     try {
-
-      const { data } = await axios.get(
-        configJSON?.baseUrl + configJSON?.friends_search_by_email + user_id
-      );
+      const data = await API_friends_searchByEmail(user_id);
       if (data?.Success) {
         const user = IsAuthnaticated();
         const fdata = data?.users?.filter((obj) => obj.email != user?.activeUserEmail)
@@ -64,19 +58,9 @@ function AddFriends() {
       console.log('sender email not found, try relogin');
       return;
     }
-    try {
-      const { data } = await axios.post(configJSON?.baseUrl + configJSON?.friend_send_Invitation, { receiver_email, sender_email });
-      if (data?.Success) {
-        MESSAGE.success(data?.message);
-        return;
-      }
-      if (!data?.Success) {
-        MESSAGE.success(data?.error);
-        return;
-
-      }
-
-    } catch (error) {
+    try { 
+      const data = await API_friends_sendFrinedRequest({receiver_email, sender_email});
+      } catch (error) {
       console.log('error is : ', error);
     }
   }

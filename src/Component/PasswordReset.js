@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { BsFillEyeSlashFill } from "react-icons/bs";
 import { IoEyeSharp } from "react-icons/io5"
 import { message as MESSAGE } from "antd";
-import axios from 'axios';
 import {  forgate_pass_email_get } from '../Utils/Auth';
 import { Formik } from 'formik';
 import { Schema_forgate_password_form } from '../Utils/Schema';
-export const configJSON = require("../Component/Config");
+import { API_user_setNewPassword } from '../Services/userApIs';
 
 
 function PasswordReset() {
@@ -22,56 +21,15 @@ function PasswordReset() {
     const [token, setToken] = useState(window?.location?.search?.split('?token=')[1])
 
 
-    // const sendOTP = async (e) => {
-    //     e.preventDefault();
-    //     setOtpError('')
-    //     if (!otp) {
-    //         setOtpError('please enter vailed otp');
-    //         return
-    //     }
-    //     try {
-    //         setloading(true);
-    //         const formData = new FormData;
-    //         const email = forgate_pass_email_get();
-    //         formData.append('email', email);
-    //         formData.append('otp', otp);
-
-    //         const { data } = await axios.post(configJSON?.baseUrl + configJSON?.check_otp, formData, {
-    //             headers: {
-    //                 'Content-Type': 'multipart/form-data',
-    //             },
-    //         });
-
-    //         if (data?.success) {
-    //             MESSAGE.success('otp verified')
-    //             setShowForm(true)
-    //             sessionStorage.setItem('verifiedOTP', otp);
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         if (error?.response?.data?.message) {
-    //             MESSAGE.error(error?.response?.data?.message)
-    //             return;
-    //         }
-    //         MESSAGE.error('server internal error');
-
-    //     } finally {
-    //         setloading(false);
-    //     }
-    // }
-
     const changePass = async (values, {resetForm}) => {
         try {
             const payload = { new_password:values?.password, email:forgate_pass_email_get(), access_token: token}
-            const {data} = await axios.put(configJSON?.baseUrl+configJSON?.reset_password,payload)
+            const data = await API_user_setNewPassword(payload);
             if(data?.success){
-                MESSAGE?.success(data?.message)
                 navigate('/password/sucessfull');
                 sessionStorage.clear();
                 return
             }
-            console.log(data);
         } catch (error) {
             console.log(error)
             if(error?.response?.data?.message){

@@ -12,11 +12,12 @@ import axios from 'axios'
 import { message as MESSAGE } from "antd";
 import { IsAuthnaticated } from '../Utils/Auth'
 import Loading from '../CommonPages/Loading'
-export const configJSON = require("../Component/Config");
+import { API_friends_getAll } from '../Services/frinedsAPI'
+import { API_games_sendGameInvitations } from '../Services/gamesAPIs'
 
 function InviteFriends() {
     const location = useLocation();
-    const game_id = location?.state?.gameData?.id;
+    const game_id = location?.state?.gameData?.game_id;
     const gameData = location?.state?.gameData;
 
     const navigate = useNavigate()
@@ -40,12 +41,10 @@ function InviteFriends() {
             console.log('sender id not found');
         }
         try {
-            const { data } = await axios.post(configJSON?.baseUrl + configJSON?.friends_get_all_friends_list, { user_email });
-            console.log(data);
+            const data = await API_friends_getAll({user_email});
             if (data?.Success) {
                 const frd = data?.friends.sort((a, b) => a.username.localeCompare(b.username))
                 setAllFrineds(frd);
-                // console.log("frd list: ", frd);
                 return;
             }
         } catch (error) {
@@ -93,23 +92,18 @@ function InviteFriends() {
             return;
         }
 
-        // const d = {
-        //     game_id:"6",
-        //     receiver_emails: ["joy123@mailinator.com", "sam@mailinator.com"],
-        //     sender_email:"mikky123@mailinator.com"
-        // }
-
         try {
             setBtnLoading(true);
             const { activeUserEmail } = IsAuthnaticated()
             const payload = {
                 sender_email: activeUserEmail,
                 receiver_emails: userList,
-                game_id: game_id.toString()
+                game_id
             }
+            
             console.log('payload is : ', payload);
-            const { data } = await axios.post(configJSON?.baseUrl + configJSON?.send_game_invitations, payload);
-           
+            const data = await API_games_sendGameInvitations(payload);
+            
             navigate("/invited/friends",{state:{'gameData':gameData}})
 
         } catch (error) {
@@ -122,7 +116,10 @@ function InviteFriends() {
 
     useEffect(() => {
         getAllFriendList()
+        console.log(gameData)
     }, [navigate])
+
+
 
 
     return (
@@ -130,9 +127,9 @@ function InviteFriends() {
             <div className="ct_mobile_width">
                 <div className="ct_login_bg ct_h-100 ">
                     <div className="ct_mob_head d-flex align-items-center px-15 justify-content-between pb-2  ">
-                        <a onClick={() => HandleCreateGameReview()} className="ct_mob_head pt-0">
+                        <span onClick={() => HandleCreateGameReview()} className="ct_mob_head pt-0">
                             <img src={back_btn} alt="img" />
-                        </a>
+                        </span>
                         <div>
                             <h4 className="text-white text-center text-center ct_fs_18 mb-0 ct_fw_600 ">INVITE FRIENDS</h4>
                             <p className="mb-0 ct_grey_text">St Louis October Brawl</p>

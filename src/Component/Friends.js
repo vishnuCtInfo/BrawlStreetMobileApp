@@ -6,10 +6,9 @@ import man_1 from "../img/man_1.png"
 import Polygon_2 from '../img/Polygon_2.png'
 import octagonal from "../img/octagonal.png"
 import corner6 from '../img/6_corner.png'
-import BottomNavigation from './BottomNavigation'
-import axios from 'axios'
+import BottomNavigation from './BottomNavigation';
 import { message as MESSAGE } from "antd";
-export const configJSON = require("../Component/Config");
+import { API_friends_friendRequestAcceptReject, API_friends_getAll, API_friends_getAllFriendsRequest } from '../Services/frinedsAPI'
 
 function Friends() {
 
@@ -30,10 +29,8 @@ function Friends() {
     if (!user_email) {
       console.log('sender id not found');
     }
-    // console.log({ user_email })
     try {
-      const { data } = await axios.post(configJSON?.baseUrl + configJSON?.friends_get_all_friends_list, { user_email });
-      // console.log(data);
+      const data = await API_friends_getAll({user_email})
       if (data?.Success) {
         const frd = data?.friends.sort((a, b) => a.username.localeCompare(b.username))
         setAllFrineds(frd);
@@ -43,22 +40,6 @@ function Friends() {
     } catch (error) {
       console.log(error);
     }
-    // finally {
-    //   const data = [
-    //     {username: 'baba'},
-    //     { username: 'bablu' },
-    //     { username: 'bunty' },
-    //     { username: 'dada' },
-    //     { username: 'imran' },
-    //     { username: 'kumar' },
-    //     { username: 'mohan' },
-    //     { username: 'raj' },
-    //     { username: 'ram' },
-    //     { username: 'sachin' }
-    //   ]
-    //   setFriendsList(data);
-    //   setAllFrineds(data);
-    // }
   }
 
   const getAllFriendRequests = async () => {
@@ -67,8 +48,7 @@ function Friends() {
       console.log('sender id not found');
     }
     try {
-      const { data } = await axios.get(configJSON?.baseUrl + configJSON?.get_requested_friend_requests + user_email);
-      // console.log(data);
+      const data = await API_friends_getAllFriendsRequest(user_email);
       if (data?.Success) {
         setRequests(data?.received_friend_requests);
         return;
@@ -81,8 +61,7 @@ function Friends() {
 
   const handleFreidnRequest = async (payload) => {
     try {
-      const { data } = await axios.post(configJSON?.baseUrl + configJSON?.friend_req_acc_rej, payload);
-      // console.log(data);
+      const data = await API_friends_friendRequestAcceptReject(payload)
       if (data?.Success) {
         MESSAGE.success(data?.message);
         getAllFriendList();

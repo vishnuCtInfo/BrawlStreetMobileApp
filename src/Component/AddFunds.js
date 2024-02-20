@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react'
 import paypal_icon from "../img/paypal_icon.png"
 import { useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
-import axios from 'axios'
-import { message, message as MESSAGE } from "antd";
-import { API_card_delete } from '../Services/cardAPIs'
-export const configJSON = require("../Component/Config");
+import {message as MESSAGE } from "antd";
+import { API_card_delete, API_card_getAllCards } from '../Services/cardAPIs'
 
 function AddFunds() {
     const navigate = useNavigate()
@@ -34,16 +32,15 @@ function AddFunds() {
         onHandlegetAllCard()
     }, [])
 
-    const onHandlegetAllCard = () => {
-        axios({
-            url: configJSON.baseUrl + configJSON.get_all_card,
-            method: "get",
-        }).then((res) => {
-            setData(res?.data?.data)
-        })
-            .catch((error) => {
-                console.log(error, "error")
-            })
+    const onHandlegetAllCard = async() => {
+        try {
+            const data = await API_card_getAllCards();
+            if(data){
+                setData(data?.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const handleRadioChange = (cardId) => {

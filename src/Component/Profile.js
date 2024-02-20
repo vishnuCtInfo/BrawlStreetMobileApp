@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import profile_pic from "../img/profile_pic.png"
 import back_btn from "../img/back_btn.png"
 import setting_profile_bg from "../img/setting-profile-bg.png"
 import { Country, State } from 'country-state-city';
-import { IsAuthnaticated } from '../Utils/Auth'
-import axios from 'axios'
 import { message as MESSAGE } from "antd";
+import { API_user_getProfile, API_user_updateProfile } from '../Services/userApIs'
 
-export const configJSON = require("../Component/Config");
 
 function Profile() {
-    const navigate = useNavigate()
     const countryData = Country.getAllCountries();
     const stateData = State.getAllStates()
 
@@ -36,12 +33,17 @@ function Profile() {
 
 
     const changeCountry = (e) => {
-        const selectedCountryName = e.target.options[e.target.selectedIndex].text;
-        setUserData({ ...userData, country: selectedCountryName })
-
+        const selectedCountryName = e?.target?.value;
         const foundState = countryData.find(user => user.name === selectedCountryName)
         const allState = stateData?.filter((state) => state?.countryCode === foundState.isoCode);
-        setUserState(allState)
+        if (allState.length > 0) {
+            setUserState(allState);
+            setUserData({ ...userData, region: allState[0]?.name, country: selectedCountryName })
+        }
+        else {
+            setUserState([{ name: 'N/A' }])
+            setUserData({ ...userData, region: 'N/A', country: selectedCountryName })
+        }
     }
 
 
@@ -64,22 +66,10 @@ function Profile() {
         }
 
         try {
-            const { userId } = IsAuthnaticated();
-            const { data } = await axios.put(
-                `${configJSON?.baseUrl}${configJSON?.update_user_profile}${userId}/`,
-                formDataToSend,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
+            const data = await API_user_updateProfile(formDataToSend);
             if (data?.success) {
-                MESSAGE.success(data?.message)
                 getProfile();
-            } else {
-                MESSAGE.error(data?.message)
-            }
+            } 
         } catch (error) {
             console.error('Error sending data:', error);
             MESSAGE.error('server internal error')
@@ -88,9 +78,8 @@ function Profile() {
 
     const getProfile = async () => {
         try {
-            const { userId } = IsAuthnaticated();
-            const { data } = await axios.get(configJSON.baseUrl + configJSON.get_user_profile + userId + '/');
-
+            const data = await API_user_getProfile();
+            console.log('data: ', data)
             setUserData(data?.data)
             const foundState = countryData.find(user => user.name === data?.data?.country)
             const allState = stateData?.filter((state) => state?.countryCode === foundState.isoCode);
@@ -102,12 +91,13 @@ function Profile() {
         }
     }
 
-    useState(() => {
+    useEffect(() => {
+        console.log('i am working')
         getProfile();
     }, [])
 
     useEffect(() => {
-        console.log(file)
+        console.log(userData)
     })
 
     return (
@@ -121,21 +111,10 @@ function Profile() {
                             </NavLink>
                             <h4 className="text-white text-center text-center flex-1 ct_fs_18 mb-0 ct_fw_600">PERSONAL INFO</h4>
                         </div>
-                        {/* <div className="text-center position-relative" style={{ paddingTop: "124px" }}>
-                            <img className='rounded-circle ct_edit_img_102' src={userData?.image ? userData?.image : profile_pic} alt="img" />
-                            <label htmlFor="ct_img_upload1" className="ct_plus_icon ct_profile_edit_icon" data-bs-toggle="modal" data-bs-target="#edit_profile">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M15.5888 0.222752C16.7011 0.215222 17.7702 0.652509 18.5584 1.43733L18.5626 1.44147C19.3478 2.22946 19.7853 3.29869 19.7778 4.41108C19.7703 5.52017 19.3209 6.58036 18.5296 7.35702L7.8341 18.0525L2.37269 19.4532C1.8592 19.5849 1.31432 19.4358 0.939444 19.061C0.564571 18.6861 0.415379 18.1413 0.547011 17.6278L1.947 12.1662L12.6426 1.47064C13.4195 0.679433 14.4798 0.23026 15.5888 0.222752ZM16.4395 3.56109C16.2188 3.34238 15.92 3.22058 15.6092 3.22268C15.2973 3.22479 14.9993 3.35143 14.7813 3.57442L14.7693 3.58658L4.64909 13.7068L4.08238 15.9176L6.2934 15.3505L16.4137 5.23023L16.4263 5.21783C16.6492 5.00012 16.7757 4.70233 16.7779 4.39077C16.78 4.08018 16.6582 3.78159 16.4395 3.56109Z" fill="white" />
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M10.9393 3.93934C11.5251 3.35355 12.4749 3.35355 13.0607 3.93934L16.0607 6.93934C16.6464 7.52513 16.6464 8.47487 16.0607 9.06066C15.4749 9.64645 14.5251 9.64645 13.9393 9.06066L10.9393 6.06066C10.3536 5.47487 10.3536 4.52513 10.9393 3.93934Z" fill="white" />
-                                </svg>
-                                <input type='file' className='d-none' id='ct_img_upload1' onChange={handleFileChange} />
-
-                            </label>
-                        </div> */}
 
 
                         <div class=" text-center position-relative" style={{ paddingTop: "124px" }}>
-                            <img className='rounded-circle ct_edit_img_102' src={userData?.image ? userData?.image : profile_pic} alt="img" />
+                            <img className='rounded-circle ct_edit_img_102 text-white' src={userData?.image ? userData?.image : profile_pic} alt="URL_NOT_FOUND" />
                             <div class="ct_plus_icon ct_profile_edit_icon" data-bs-toggle="modal" data-bs-target="#edit_profile">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M15.5888 0.222752C16.7011 0.215222 17.7702 0.652509 18.5584 1.43733L18.5626 1.44147C19.3478 2.22946 19.7853 3.29869 19.7778 4.41108C19.7703 5.52017 19.3209 6.58036 18.5296 7.35702L7.8341 18.0525L2.37269 19.4532C1.8592 19.5849 1.31432 19.4358 0.939444 19.061C0.564571 18.6861 0.415379 18.1413 0.547011 17.6278L1.947 12.1662L12.6426 1.47064C13.4195 0.679433 14.4798 0.23026 15.5888 0.222752ZM16.4395 3.56109C16.2188 3.34238 15.92 3.22058 15.6092 3.22268C15.2973 3.22479 14.9993 3.35143 14.7813 3.57442L14.7693 3.58658L4.64909 13.7068L4.08238 15.9176L6.2934 15.3505L16.4137 5.23023L16.4263 5.21783C16.6492 5.00012 16.7757 4.70233 16.7779 4.39077C16.78 4.08018 16.6582 3.78159 16.4395 3.56109Z" fill="white" />
@@ -143,6 +122,7 @@ function Profile() {
                                 </svg>
                             </div>
                         </div>
+
                     </div>
 
                     <div className="ct_white_bg pt-28  ct_pb_100 px-15">
@@ -198,9 +178,9 @@ function Profile() {
                         <div className="pb-20">
                             <p className="mb-0 ct_fw_400 ct_fs_13 mb-1">Federal tax classification</p>
                             <select onChange={(e) => setUserData({ ...userData, federal_tax_classification: e?.target?.options[e?.target?.selectedIndex]?.text })} value={userData.federal_tax_classification} className="ct_select_option form-control w-100">
-                                <option value="Limited Liability Corporation 1">Limited Liability Corporation 1(LL..)</option>
-                                <option value="Limited Liability Corporation 2">Limited Liability Corporation 2(LL..)</option>
-                                <option value="Limited Liability Corporation 3">Limited Liability Corporation 3(LL..)</option>
+                                <option value="Limited Liability Corporation 1(LL..)">Limited Liability Corporation 1(LL..)</option>
+                                <option value="Limited Liability Corporation 2(LL..)">Limited Liability Corporation 2(LL..)</option>
+                                <option value="Limited Liability Corporation 3(LL..)">Limited Liability Corporation 3(LL..)</option>
                             </select>
                         </div>
                         <div className="pb-20">
@@ -256,7 +236,7 @@ function Profile() {
                                     </div>
 
 
-                                    
+
                                     <label htmlFor="ct_img_upload1" className="ct_fs_14 ct_blue_text ct_fw_700 mb-0" style={{ cursor: 'pointer' }}>
                                         Change Image
                                     </label>

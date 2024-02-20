@@ -29,26 +29,11 @@ import friends from "../img/friends.png"
 import axios from 'axios'
 import BottomNavigation from './BottomNavigation'
 import { IsAuthnaticated } from '../Utils/Auth'
-export const configJSON = require("../Component/Config");
+import { API_games_getAllgames, API_games_pendingGamesInvitations } from '../Services/gamesAPIs'
 function OpenGames() {
     const navigate = useNavigate()
     const [data, setData] = useState([])
     const [pendingData, setPendigData] = useState([]);
-    // const HandleMygames = () => {
-    //     navigate("/mygames")
-    // }
-    // const HandleOpenGames = () => {
-    //     navigate("/open/games")
-    // }
-    // const HandleWatchlist = () => {
-    //     navigate("/watchlist")
-    // }
-    // const HandleNavigationMore = () => {
-    //     navigate("/navigation/more")
-    // }
-    // const HandleNotificationsMain = () => {
-    //     navigate("/notification/main")
-    // }
     const HandleCreateGame = () => {
         navigate("/create/game")
     }
@@ -59,23 +44,23 @@ function OpenGames() {
         navigate("/invite/game/detail")
     }
 
-    const get_all_games = () => {
-        axios({
-            url: configJSON.baseUrl + configJSON.get_all_games,
-            method: "get",
-        }).then((res) => {
-            setData(res.data.data)
-        })
-            .catch((error) => {
-                console.log(error, "error")
-            })
+    const get_all_games = async() => {
+        try {
+            const data = await API_games_getAllgames();
+            if (data?.success) {
+                setData(data?.data);
+                return;
+            }
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const getPendingGameInvitation = async () => {
         try {
             const { activeUserEmail } = IsAuthnaticated();
-            const { data } = axios.get(configJSON?.baseUrl + configJSON?.get_pending_game_invitations + activeUserEmail);
-            console.log('get data: ', data);
+            const data = API_games_pendingGamesInvitations(activeUserEmail)
             setPendigData(data);
         } catch (error) {
             console.log(error);

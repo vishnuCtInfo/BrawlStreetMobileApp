@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import dark_close from '../img/dark_close.png'
 import { Formik } from 'formik';
 import { Shcema_create_game_form } from '../Utils/Schema'
@@ -35,9 +35,9 @@ function CreateGame() {
         <>
             <div className="ct_mobile_width">
                 <div className="ct_mob_head d-flex align-items-center pb-30 px-15">
-                    <span onClick={()=>navigate(-1)} className="ct_close_modal">
+                    <NavLink to='/open/games' className="ct_close_modal">
                         <img src={dark_close} alt="img" className="ct_img_white" />
-                    </span>
+                    </NavLink>
                     <h4 className="text-white text-center text-center flex-1 ct_fs_18 mb-0 ct_fw_600">CREATE GAME</h4>
                 </div>
 
@@ -48,20 +48,20 @@ function CreateGame() {
                         access_type: 'public',
                         entry_fee: '',
                         start_date: new Date().toISOString().split("T")[0],
-                        start_time: '',
+                        start_time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                         duration: '',
-                        hours: 'H',
+                        hours: '1',
                         max_player_level: '1',
                     }}
-
+ 
                     validationSchema={Shcema_create_game_form}
                     onSubmit={(values, actions) => HandleOnSubmit(values, actions)}
                 >
                     {
-                        ({ errors, isValid, values, touched, handleBlur, handleSubmit, handleChange }) => (
+                        ({ errors, values, touched, handleBlur, handleSubmit, handleChange }) => (
                             <form onSubmit={(e) => { e.preventDefault() }}>
-                                {/* {errors && console.log(errors[Object?.keys(errors)[0]])} */}
-                                {errors && console.log(errors)}
+                                {errors && console.log(errors[Object?.keys(errors)[0]])}
+                                {errors && console.log(values)}
                                 <div className="ct_grey_bg_clr ct_game_search_input">
 
                                     <input type="text" className="form-control ct_Oswald_ff" placeholder='Enter game name'
@@ -134,7 +134,7 @@ function CreateGame() {
                                             <div className="d-flex gap-3 pb-20">
                                                 <div className="ct_col_50 ">
                                                     <p className="mb-0 ct_fw_400 ct_fs_13 mb-1">Duration</p>
-                                                    <input type="number" className="ct_select_option form-control w-100"
+                                                    <input type="number" min={1} className="ct_select_option form-control w-100"
                                                         name='duration' onChange={handleChange} onBlur={handleBlur} value={values?.duration} />
                                                 </div>
                                                 <div className="ct_col_50">
@@ -142,8 +142,8 @@ function CreateGame() {
                                                     <select className="ct_select_option form-control w-100"
                                                         name='hours' onChange={handleChange} onBlur={handleBlur} value={values?.hours}
                                                     >
-                                                        <option value='H'>Hours</option>
-                                                        <option value='M'>Minute</option>
+                                                        <option value='1'>Hours</option>
+                                                        <option value='0'>Minute</option>
                                                     </select>
 
                                                 </div>

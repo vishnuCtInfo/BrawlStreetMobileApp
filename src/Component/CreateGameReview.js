@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
 import { API_games_createGame } from '../Services/gamesAPIs';
@@ -22,7 +22,7 @@ function CreateGameReview() {
             setLoading(true)
             try {
                 const res = await API_games_createGame(gameData);
-                console.log(res)
+                // console.log(res)
                 if (res) {
                     navigate("/invite/friends", { state: { 'gameData': res } })
                 }
@@ -35,8 +35,7 @@ function CreateGameReview() {
 
     }
 
-
-
+console.log(gameData)
     return (
         <>
             <div className="ct_mobile_width">
@@ -79,7 +78,7 @@ function CreateGameReview() {
 
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
                             <p className="mb-0 ct_fs_13 ct_fw_400">DURATION</p>
-                            <p className="mb-0 ct_fs_13 ct_fw_700">{gameData?.duration} hours</p>
+                            <p className="mb-0 ct_fs_13 ct_fw_700">{gameData?.duration} {gameData?.hours == 1 ? 'Hours' : 'Minutes'}</p>
                         </div>
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
                             <p className="mb-0 ct_fs_13 ct_fw_400">MAXIMUM PLAYER LEVEL</p>

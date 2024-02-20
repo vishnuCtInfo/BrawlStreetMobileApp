@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
-import axios from 'axios'
-import { message as MESSAGE } from "antd";
-export const configJSON = require("../Component/Config");
+import { API_card_getById } from '../Services/cardAPIs';
+
 function ReviewConfirm() {
     const navigate = useNavigate()
     const location = useLocation();
@@ -16,20 +15,12 @@ function ReviewConfirm() {
 
     const HandleCardIndexwise = async () => {
         try {
-            const { data } = await axios.get(configJSON.baseUrl + configJSON.getAllCard_IndexWise + `/${card_ID}/`)
-            if (data?.success)
+            const data = await API_card_getById(card_ID)
+            if (data)
                 setCard(data?.data)
         } catch (error) {
             console.log(error)
         }
-        // axios({
-        //     url: configJSON.baseUrl + configJSON.getAllCard_IndexWise + `/${card_ID}/`,
-        //     method: "get",
-        // }).then((res) => {
-        //     localStorage.setItem("data", res)
-        // }).catch((error) => {
-        //     console.log(error, "error")
-        // });
     }
 
     const HandleAddFundsSucessfull = () => {

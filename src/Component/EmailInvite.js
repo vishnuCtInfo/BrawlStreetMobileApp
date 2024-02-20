@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import back_btn from "../img/back_btn.png";
 import { IsAuthnaticated, server_live_url, server_local_url } from "../Utils/Auth";
 import { message as MESSAGE } from "antd";
-import axios from "axios";
-export const configJSON = require("../Component/Config");
+import { API_user_sendMailInvitaion } from "../Services/userApIs";
 
 function EmailInvite() {
   const navigate = useNavigate();
@@ -26,12 +25,10 @@ function EmailInvite() {
     try {
       payload = {...payload, reference_link: payload.reference_link+'=email='+payload?.email}
       console.log(payload)
-      const {data} = await axios.post(configJSON?.baseUrl + configJSON?.send_email_invitation, payload);
-      MESSAGE.success(data?.message);
+      const data = await API_user_sendMailInvitaion(payload);
       navigate("/send/invite",{state:{id:payload?.email}})
     } catch (error) {
       console.log(error);
-      MESSAGE.error('server internal errors');
     }finally{
       setLoadingBtn(false)
     }

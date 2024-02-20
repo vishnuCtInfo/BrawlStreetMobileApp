@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { message as MESSAGE } from "antd";
 import back_btn from "../img/back_btn.png"
-import axios from 'axios'
 import { forgate_pass_email_set, server_live_url, server_local_url } from '../Utils/Auth';
-export const configJSON = require("../Component/Config");
+import { API_user_fogotPassword } from '../Services/userApIs';
 function ForgotPassword() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false);
@@ -29,19 +27,16 @@ function ForgotPassword() {
         
         try {
             forgate_pass_email_set(email);
-            const { data } = await axios.post(configJSON.baseUrl + configJSON.forget_password, { email, url_link:forgotPage });
-            console.log('res. data: ', data);
+            const data = await API_user_fogotPassword({ email, url_link:forgotPage });
+           console.log('res. data: ', data);
             if (data?.success) {
-                MESSAGE.success(data?.message)
                 navigate("/email/sent")
                 return
             }
             setError(data?.message)
-            MESSAGE.error(data?.message)
             return
         } catch (error) {
             console.log(error);
-            MESSAGE.error("server internal error")
         } finally {
             setLoading(false)
         }

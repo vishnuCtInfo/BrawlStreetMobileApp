@@ -106,14 +106,11 @@ import CreateGameReview from './Component/CreateGameReview';
 import CheckYourMail from './Component/CheckYourMail';
 import BuyShares from './Component/BuyShares';
 import Friends from './Component/Friends';
-import NewPage from './Component/newPage';
 import Carousal from './Component/Carousal';
 import SendFeedback from './Component/SendFeedback';
 
 
-function App() {
-
-  
+function App() {  
   return (
     <div className="App">
       <Router
@@ -236,7 +233,6 @@ function App() {
           <Route path="/create/game/review" element={<CreateGameReview />}></Route>
           <Route path="/check/your/mail" element={<CheckYourMail />}></Route>
           <Route path="/buy/shares" element={<BuyShares />}></Route>
-          <Route path="/new/page" element={<NewPage />}></Route>
           <Route path="/carousal" element={<Carousal />}></Route>
           <Route path="/send-feedback" element={<SendFeedback />}></Route>
 

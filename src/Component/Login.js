@@ -9,7 +9,6 @@ import { IsAuthnaticated, SetIsAuthnaticated } from '../Utils/Auth';
 import { Formik } from 'formik';
 import { Schema_login_form } from '../Utils/Schema';
 import { API_user_login } from '../Services/userApIs';
-export const configJSON = require("../Component/Config");
 function Login() {
     const [isEye, setIsEye] = useState(false)
     const [type, setType] = useState("password")
@@ -27,9 +26,7 @@ function Login() {
         navigate("/")
     }
     const onSubmitForm = async (payload, { resetForm }) => {
-        try {
-            // const { data } = await axios.post(configJSON.baseUrl + configJSON.login_api, payload);
-            const data = await API_user_login(payload);
+        try { const data = await API_user_login(payload);
             console.log(data)
             if (data?.success) {
                 navigate("/onboarding6");

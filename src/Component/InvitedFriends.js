@@ -1,14 +1,11 @@
 import React from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import confirm from "../img/confirm.png"
 function InvitedFriends() {
     const location = useLocation();
     const gameData = location?.state?.gameData;
 
     const navigate = useNavigate()
-    const HandleInviteFriends = () => {
-        navigate("/create/game")
-    }
     return (
         <>
             <div className="ct_mobile_width">
@@ -23,7 +20,7 @@ function InvitedFriends() {
                                 Game <span className="ct_black_clr">“{gameData?.name}”</span> has been successfully created.
                             </p>
                             <div className="ct_grey_bg_clr d-flex align-items-center gap-3 ct_fixed_botom">
-                                <a onClick={() => HandleInviteFriends()} className="ct_button_blue ct_light_blue_btn">DONE</a>
+                                <NavLink to="/open/games " className="ct_button_blue ct_light_blue_btn">DONE</NavLink>
                             </div>
                         </div>
                     </div>

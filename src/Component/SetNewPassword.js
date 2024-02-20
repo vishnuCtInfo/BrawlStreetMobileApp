@@ -8,7 +8,7 @@ import { IoEyeSharp } from 'react-icons/io5'
 import { IsAuthnaticated } from '../Utils/Auth'
 import { message as MESSAGE } from "antd";
 import axios from 'axios';
-export const configJSON = require("../Component/Config");
+import { API_user_setNewPassword } from '../Services/userApIs'
 
 function SetNewPassword() {
     const navigate = useNavigate()
@@ -26,8 +26,8 @@ function SetNewPassword() {
     const changePassword = async (values, { resetForm }) => {
         try {
             const payload = { new_password: values?.password, email: IsAuthnaticated()?.activeUserEmail, otp: sessionStorage.getItem('verifiedOTP') }
-            const { data } = await axios.put(configJSON?.baseUrl + configJSON?.reset_password, payload)
-            if (data?.success) {
+            const data = await API_user_setNewPassword(payload);
+           if (data?.success) {
                 MESSAGE?.success(data?.message)
                 navigate('/password/updated');
                 sessionStorage.clear();
