@@ -18,7 +18,6 @@ function Login() {
     const [showError, setShowError] = useState(false);
 
 
-
     const HandleForgotPassword = () => {
         navigate("/forgot/password")
     }
@@ -54,6 +53,17 @@ function Login() {
         }
     }, [navigate])
 
+    const getUserIP = async()=>{
+        try {
+            const {data} = await axios.get('https://geolocation-db.com/json/');
+            console.log(data?.IPv4);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(()=>{
+        getUserIP();
+    },[])
     return (
         <>
             <div className="ct_mobile_width">

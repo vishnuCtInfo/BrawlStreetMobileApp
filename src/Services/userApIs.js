@@ -16,6 +16,18 @@ import {
 
 
 //JSON GET methods
+
+export const API_user_logout = async () => {
+    try {
+        const { data } = await api.get(_BACKEND_USER_PENDING_REFERRAL_INVITATIONS);
+        return data;
+    } catch (error) {
+        console.log(error)
+        toast.error('server internal error')
+        throw error
+    }
+}
+
 export const API_user_refferal_pending = async () => {
     try {
         const { data } = await api.get(_BACKEND_USER_PENDING_REFERRAL_INVITATIONS);
@@ -171,7 +183,7 @@ export const API_user_updateProfile = async (formdata) => {
             },
         });
         if (data?.success) {
-            toast.success(data?.message);
+            toast.success(data?.message || 'Update Successfully');
             return data;
         } else {
             toast.error(data?.message);

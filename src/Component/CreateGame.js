@@ -5,13 +5,15 @@ import { Formik } from 'formik';
 import { Shcema_create_game_form } from '../Utils/Schema'
 import DatePicker from 'react-datepicker';
 import { ConvertFullDateTime } from '../Utils/TimeConverter';
+import { message as toast } from 'antd';
+import { timeIsHour } from '../Utils/timeCalculate';
 function CreateGame() {
 
     const location = useLocation();
     const navigate = useNavigate()
 
     const gameData = location?.state?.gameData;
-    const [selectedTime, setSelectedTime] = useState( new Date());
+    const [selectedTime, setSelectedTime] = useState(new Date());
 
     const handleTimeChange = (time, cb) => {
         setSelectedTime(time);
@@ -21,15 +23,32 @@ function CreateGame() {
 
     const HandleOnSubmit = (data, { resetForm }) => {
         const time_zone = Intl.DateTimeFormat()?.resolvedOptions()?.timeZone;
-        data = {...data, time_zone}
+        data?.hours === 1 ? data = { ...data, time_zone } : data = { ...data, time_zone, duration:data?.duration*24 }
         navigate("/create/game/review", { state: { 'gameData': data } });
     }
 
-    useEffect(()=>{
-        if(gameData){
+    const handleDuration = (value, cb) => {
+        cb('duration', value)
+        if (value > 30) {
+            cb('hours', 1)
+        }
+    }
+
+    const handleDays = (value, depened, cb, errorcb) => {
+        if (depened <= 30) {
+            cb('hours', 0);
+        } else {
+            toast.info("Day's max is 30");
+            cb('hours', 1)
+        }
+
+    }
+
+    useEffect(() => {
+        if (gameData) {
             setSelectedTime(ConvertFullDateTime(gameData.start_time))
         }
-    },[])
+    }, [])
 
     return (
         <>
@@ -42,7 +61,7 @@ function CreateGame() {
                 </div>
 
                 <Formik
-                    initialValues={gameData ? {...gameData}:{
+                    initialValues={gameData ? { ...gameData, hours: timeIsHour(gameData?.duration)  } : {
                         name: '',
                         game_type: '50/50',
                         access_type: 'public',
@@ -53,20 +72,21 @@ function CreateGame() {
                         hours: '1',
                         max_player_level: '1',
                     }}
- 
+
                     validationSchema={Shcema_create_game_form}
                     onSubmit={(values, actions) => HandleOnSubmit(values, actions)}
                 >
                     {
-                        ({ errors, values, touched, handleBlur, handleSubmit, handleChange }) => (
+                        ({ errors, values, touched, handleBlur, handleSubmit, handleChange, setFieldValue, setFieldError }) => (
                             <form onSubmit={(e) => { e.preventDefault() }}>
-                                {errors && console.log(errors[Object?.keys(errors)[0]])}
-                                {errors && console.log(values)}
+                                {/* {errors && console.log(errors[Object?.keys(errors)[0]])}
+                                {errors && console.log(values)} */}
                                 <div className="ct_grey_bg_clr ct_game_search_input">
 
                                     <input type="text" className="form-control ct_Oswald_ff" placeholder='Enter game name'
                                         onChange={handleChange} value={values?.name} name='name' onBlur={handleBlur}
                                     />
+                                    <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.name && errors?.name && (errors?.name)}</span>
 
                                     {
                                         /* <p className="mb-0 ct_fw_400 ct_fs_13 mb-1">Enter game name</p>
@@ -92,6 +112,7 @@ function CreateGame() {
                                                 >TOP 10</button>
 
                                             </div>
+                                            <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.game_type && errors?.game_type && (errors?.game_type)}</span>
 
                                         </div>
                                         <div className="pb-20 mt_20">
@@ -99,6 +120,7 @@ function CreateGame() {
                                             <input type="number" className="ct_select_option ct_fw_600 text-dark" placeholder='$0'
                                                 name='entry_fee' onChange={handleChange} onBlur={handleBlur} value={values?.entry_fee} />
                                         </div>
+                                        <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.entry_fee && errors?.entry_fee && (errors?.entry_fee)}</span>
                                     </div>
                                     <div className="ct_border_top pt-23">
                                         <div className="px-15">
@@ -108,6 +130,8 @@ function CreateGame() {
                                                     <input required type="date" autoComplete="off" className="ct_select_option form-control w-100"
                                                         min={new Date().toISOString().split("T")[0]}
                                                         name='start_date' onChange={handleChange} onBlur={handleBlur} value={values?.start_date} />
+
+                                                    <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.start_date && errors?.start_date && (errors?.start_date)}</span>
                                                 </div>
 
                                                 <div className="ct_col_50">
@@ -128,6 +152,7 @@ function CreateGame() {
                                                         placeholderText="Select Time" // Placeholder text
                                                         className="ct_select_option form-control w-100"
                                                     />
+                                                    <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.start_time && errors?.start_time && (errors?.start_time)}</span>
                                                 </div>
                                             </div>
 
@@ -135,17 +160,19 @@ function CreateGame() {
                                                 <div className="ct_col_50 ">
                                                     <p className="mb-0 ct_fw_400 ct_fs_13 mb-1">Duration</p>
                                                     <input type="number" min={1} className="ct_select_option form-control w-100"
-                                                        name='duration' onChange={handleChange} onBlur={handleBlur} value={values?.duration} />
+                                                        name='duration' onChange={(e) => handleDuration(e.target.value, setFieldValue)} onBlur={handleBlur} value={values?.duration} />
+                                                    <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.duration && errors?.duration && (errors?.duration)}</span>
                                                 </div>
                                                 <div className="ct_col_50">
                                                     <p className="mb-0 ct_fw_400">&nbsp;</p>
                                                     <select className="ct_select_option form-control w-100"
-                                                        name='hours' onChange={handleChange} onBlur={handleBlur} value={values?.hours}
+                                                        name='hours' onChange={(e) => handleDays(e.target.value, values?.duration, setFieldValue, setFieldError)} onBlur={handleBlur} value={values?.hours}
                                                     >
                                                         <option value='1'>Hours</option>
-                                                        <option value='0'>Minute</option>
+                                                        <option value='0'>Days</option>
                                                     </select>
 
+                                                    <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.hours && errors?.hours && (errors?.hours)}</span>
                                                 </div>
                                             </div>
                                             <div className="d-flex gap-3 pb-20">
@@ -158,6 +185,7 @@ function CreateGame() {
                                                             <option value={key + 1} key={key}>{(key < 9) ? '0' + (key + 1) : key + 1}</option>
                                                         )}
                                                     </select>
+                                                    <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.max_player_level && errors?.max_player_level && (errors?.max_player_level)}</span>
 
                                                 </div>
                                             </div>
@@ -187,6 +215,7 @@ function CreateGame() {
                                                         Private
                                                     </button>
                                                 </div>
+                                                <span className='text-danger' style={{ fontSize: '80%' }}>{touched?.access_type && errors?.access_type && (errors?.access_type)}</span>
                                             </div>
                                         </div>
                                     </div>

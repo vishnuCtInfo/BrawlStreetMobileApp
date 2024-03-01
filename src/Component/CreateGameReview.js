@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import back_btn from "../img/back_btn.png"
 import { API_games_createGame } from '../Services/gamesAPIs';
 import { Convert12H } from '../Utils/TimeConverter';
+import {timeCalculateLogic} from '../Utils/timeCalculate';
 
 function CreateGameReview() {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ function CreateGameReview() {
 
     }
 
-console.log(gameData)
+console.log(gameData) 
     return (
         <>
             <div className="ct_mobile_width">
@@ -78,7 +79,7 @@ console.log(gameData)
 
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
                             <p className="mb-0 ct_fs_13 ct_fw_400">DURATION</p>
-                            <p className="mb-0 ct_fs_13 ct_fw_700">{gameData?.duration} {gameData?.hours == 1 ? 'Hours' : 'Minutes'}</p>
+                            <p className="mb-0 ct_fs_13 ct_fw_700">{timeCalculateLogic(gameData?.duration)}</p>
                         </div>
                         <div className="py-12 ct_border_btm ct_border_top d-flex align-items-center justify-content-between">
                             <p className="mb-0 ct_fs_13 ct_fw_400">MAXIMUM PLAYER LEVEL</p>
